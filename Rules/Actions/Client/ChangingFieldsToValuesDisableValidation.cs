@@ -91,6 +91,7 @@
         base.OnFieldsLoaded(context);
         return;
       }
+      
 
       if (match.Success)
       {
@@ -99,7 +100,7 @@
           validator.Enabled = false;
         }
       }
-      else
+      else if (operatorItem.Name != "and")
       {
         base.OnFieldsLoaded(context);
       }
