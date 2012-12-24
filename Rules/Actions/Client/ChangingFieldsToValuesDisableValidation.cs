@@ -76,8 +76,7 @@
       Assert.ArgumentNotNull(context, "context");
 
       var operatorItem = Context.Database.GetItem(this.Operator);
-      var trigger2 = this.GetField(context, this.Trigger2) as IResult;
-      ;
+      var trigger2 = this.GetField(context, this.Trigger2) as IResult;     
 
       if (trigger2 == null || operatorItem == null)
       {
