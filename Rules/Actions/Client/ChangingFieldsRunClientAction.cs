@@ -20,7 +20,7 @@
     /// <summary>
     /// The client script template
     /// </summary>
-    private readonly static string clientScriptTemplate = "$scw('#{3}').change(function(){{$scw('[name=\"{1}\"]').first().trigger('change')}});$scw('#{0}').change(function(){{(function d($) {{var el1=$('[name=\"{1}\"]'); el2=$('[name=\"{4}\"]'); if (new RegExp('{2}').test($(el1.filter(':checked')[0] || el1[0]).val() || '') {6} new RegExp('{5}').test($(el2.filter(':checked')[0] || el2[0]).val() || '')) {{ $scw.each([$scw('#{7}')], function(){{{8}}})}};}}).apply(this, [$scw])}}).triggerHandler('change');";
+    private readonly static string clientScriptTemplate = "$scw('#{3}').change(function(){{$scw('[name=\"{1}\"]').first().trigger('change')}});$scw('#{0}').change(function(){{(function d($) {{var el1=$('[name=\"{1}\"]'); el2=$('[name=\"{4}\"]'); if (new RegExp('{2}').test($(el1.filter(':checked')[0] || ($(el1[0]).is(':checkbox') ? $() : el1[0])).val() || '') {6} new RegExp('{5}').test($(el2.filter(':checked')[0] || ($(el2[0]).is(':checkbox') ? $() : el2[0])).val() || '')) {{ $scw.each([$scw('#{7}')], function(){{{8}}})}};}}).apply(this, [$scw])}}).triggerHandler('change');";
 
     #endregion
 

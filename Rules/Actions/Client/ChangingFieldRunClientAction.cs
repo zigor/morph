@@ -20,7 +20,7 @@ namespace Morph.Forms.Rules.Actions.Client
     /// <summary>
     /// The client script template
     /// </summary>
-    private readonly static string clientScriptTemplate = "$scw('#{0}').change(function(){{ (function d($, p) {{ var el = $('[name=\"{1}\"]'); if (new RegExp('{2}').test($(el.filter(':checked')[0] || el[0]).val() || '')) {{ $scw.each([$scw('#{3}')], function(){{{4}}})}}}}).apply(this, [$scw]) }}).triggerHandler('change');";
+    private readonly static string clientScriptTemplate = "$scw('#{0}').change(function(){{ (function d($, p) {{ var el = $('[name=\"{1}\"]'); if (\r\nnew RegExp('{2}').test($(el.filter(':checked')[0] || ($(el[0]).is(':checkbox') ? $() : el[0])).val() || ''))\r\n {{ $scw.each([$scw('#{3}')], function(){{{4}}})}}}}).apply(this, [$scw]) }}).triggerHandler('change');";
 
     #endregion
     
