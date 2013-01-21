@@ -1,12 +1,17 @@
 ﻿namespace Morph.Forms.Rules.Actions.Server
 {
+  using System;
+  using System.Linq;
   using System.Text.RegularExpressions;
   using System.Web.UI;
+
+  using Morph.Forms.Web.UI;
 
   using Sitecore;
   using Sitecore.Diagnostics;
   using Sitecore.Form.Web.UI.Controls;
   using Sitecore.Forms.Core.Rules;
+  using SysListControl = System.Web.UI.WebControls.ListControl;
 
   /// <summary>
   /// Defines the select field value matching regex class.
@@ -48,11 +53,11 @@
       if (ruleContext.Control == null || 
           string.IsNullOrEmpty(this.FieldId) || 
           string.IsNullOrEmpty(this.Pattern))
-      {
+      {   
         return;
       }
 
-      ruleContext.Control.Load += (s, e) => this.CopyMatchingValue(ruleContext.Control);     
+      ruleContext.Control.Load += (s, e) => this.CopyMatchingValue(ruleContext.Control);
     }
 
     /// <summary>
@@ -72,8 +77,39 @@
       }
 
       var match = Regex.Match(holder.Result.Value.ToString(), this.Pattern);
-      
-      target.DefaultValue = match.Success ? match.Value.Trim() : string.Empty;
+      string value = match.Success ? match.Value.Trim() : string.Empty;
+
+      target.DefaultValue = ConvertToFieldSpecificValue(target, value);
+    }
+
+    /// <summary>
+    /// Converts to field specific value.
+    /// </summary>
+    /// <param name="target">The target.</param>
+    /// <param name="value">The value.</param>
+    /// <returns></returns>
+    protected virtual string ConvertToFieldSpecificValue(IResult target, string value)
+    {
+      var field = target as ListControl;
+
+      if (field != null)
+      {
+        var item = field.Items.FindByValue(value) ?? field.Items.FindByText(value);
+
+        if (item != null)
+        {
+          var list = field.Controls.Flatten().OfType<SysListControl>().FirstOrDefault();
+          if (list != null)
+          {
+            list.ClearSelection();
+            list.SelectedValue = item.Value;
+          }
+
+          return item.Value;
+        }
+      }
+
+      return value;
     }
 
     #endregion
