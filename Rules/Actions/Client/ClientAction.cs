@@ -55,7 +55,7 @@ namespace Morph.Forms.Rules.Actions.Client
         return;
       }
 
-      var ready = "$scwhead.ready(function(){{{0}}});".FormatWith(script);
+      var ready = "$scw(document).ready(function(){{{0}}});".FormatWith(script);
 
       ScriptManager.RegisterStartupScript(control, typeof(Page), ready, ready, true);
     }
