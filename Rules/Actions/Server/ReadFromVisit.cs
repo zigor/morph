@@ -21,7 +21,7 @@
     {
       Assert.ArgumentNotNull(ruleContext, "ruleContext");
 
-      if (Tracker.Current.Interaction == null)
+      if (!Tracker.IsActive || Tracker.Current.Interaction == null)
       {
         return;
       }

@@ -23,7 +23,7 @@
     {
       Assert.ArgumentNotNull(ruleContext, "ruleContext");
 
-      if (Tracker.Current.Contact == null)
+      if (!Tracker.IsActive || Tracker.Current.Contact == null)
       {
         return;
       }
