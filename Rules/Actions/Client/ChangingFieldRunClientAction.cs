@@ -78,8 +78,8 @@ namespace Morph.Forms.Rules.Actions.Client
         return string.Empty;
       }
 
-      var triggerControl = this.GetChildMatchingAnyId(trigger.Controls.Flatten(), trigger.ID, trigger.ID + "scope");
-      var observeControl = this.GetChildMatchingAnyId(control.Controls.Flatten(), control.ID, control.ID + "scope");
+      var triggerControl = this.GetChildMatchingAnyId(trigger.Controls.Flatten(), trigger.ID, trigger.ID + "scope", trigger.ID + "checkbox");
+      var observeControl = this.GetChildMatchingAnyId(control.Controls.Flatten(), control.ID, control.ID + "scope", control.ID + "checkbox");
 
       if (triggerControl == null || observeControl == null)
       {

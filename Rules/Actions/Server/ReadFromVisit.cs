@@ -1,5 +1,7 @@
 ﻿namespace Morph.Forms.Rules.Actions.Server
 {
+  using System.Globalization;
+
   using Sitecore.Analytics;
   using Sitecore.Diagnostics;
   using Sitecore.Forms.Core.Rules;
@@ -19,7 +21,7 @@
     {
       Assert.ArgumentNotNull(ruleContext, "ruleContext");
 
-      if (Tracker.CurrentVisit == null)
+      if (Tracker.Current.Interaction == null)
       {
         return;
       }
@@ -35,7 +37,34 @@
     /// </returns>
     protected override object GetValue()
     {
-      return Tracker.CurrentVisit[this.Name];
+      switch (this.Name.ToLower(CultureInfo.InvariantCulture))
+      {
+        case "areacode":
+          return Tracker.Current.Interaction.GeoData.AreaCode;
+        case "businessname":
+          return Tracker.Current.Interaction.GeoData.BusinessName;
+        case "city":
+          return Tracker.Current.Interaction.GeoData.City;
+        case "country":
+          return Tracker.Current.Interaction.GeoData.Country;
+        case "dns":
+          return Tracker.Current.Interaction.GeoData.Dns;
+        case "isp":
+          return Tracker.Current.Interaction.GeoData.Isp;
+        case "latitude":
+          return Tracker.Current.Interaction.GeoData.Latitude;
+        case "longitude":
+          return Tracker.Current.Interaction.GeoData.Longitude;
+        case "metrocode":
+          return Tracker.Current.Interaction.GeoData.MetroCode;
+        case "postalcode":
+          return Tracker.Current.Interaction.GeoData.PostalCode;
+        case "region":
+          return Tracker.Current.Interaction.GeoData.Region;
+        case "url":
+          return Tracker.Current.Interaction.GeoData.Url;
+      }
+      return string.Empty;
     }
 
     #endregion

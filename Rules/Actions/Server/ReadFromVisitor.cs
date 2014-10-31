@@ -1,8 +1,9 @@
 ﻿namespace Morph.Forms.Rules.Actions.Server
 {
+  using System.Globalization;
+
   using Sitecore;
   using Sitecore.Analytics;
-  using Sitecore.Analytics.Data.DataAccess;
   using Sitecore.Diagnostics;
   using Sitecore.Forms.Core.Rules;
 
@@ -22,7 +23,7 @@
     {
       Assert.ArgumentNotNull(ruleContext, "ruleContext");
 
-      if (Tracker.Visitor == null)
+      if (Tracker.Current.Contact == null)
       {
         return;
       }
@@ -38,11 +39,13 @@
     /// </returns>
     [CanBeNull]
     protected override object GetValue()
-    {      
-      Tracker.Visitor.Load(new VisitorLoadOptions { Options = VisitorOptions.Visitor });
-
-      var row = Tracker.Visitor.DataSet.Visitors.FindByVisitorId(Tracker.Visitor.VisitorId);
-      return row[this.Name];
+    {
+      switch (this.Name.ToLower(CultureInfo.InvariantCulture))
+      {
+        case "visitcount":
+          return Tracker.Current.Contact.System.VisitCount;
+      }
+      return string.Empty;
     }
 
     #endregion
