@@ -1,3 +1,5 @@
+using Sitecore.Forms.Mvc.ViewModels;
+
 namespace Morph.Forms.Rules.Actions
 {
   using System;

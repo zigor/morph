@@ -1,3 +1,8 @@
+using System;
+using Morph.Forms.JsCode;
+using Sitecore.Data;
+using Sitecore.Forms.Mvc.ViewModels;
+
 namespace Morph.Forms.Rules.Actions.Client
 {
   using System.Web.UI;
@@ -7,7 +12,6 @@ namespace Morph.Forms.Rules.Actions.Client
   using Sitecore;
   using Sitecore.Diagnostics;
   using Sitecore.Forms.Core.Rules;
-  using Sitecore.StringExtensions;
 
   /// <summary>
   /// Defines the changing field run client action class.
@@ -15,15 +19,6 @@ namespace Morph.Forms.Rules.Actions.Client
   /// <typeparam name="T"></typeparam>
   public abstract class ChangingFieldRunClientAction<T> : ClientAction<T> where T : ConditionalRuleContext
   {
-    #region Fields
-
-    /// <summary>
-    /// The client script template
-    /// </summary>
-    private readonly static string clientScriptTemplate = "$scw('#{0}').change(function(){{ (function d($, p) {{ var el = $('[name=\"{1}\"]'); if (new RegExp('{2}').test($(el.filter(':checked')[0] || ($(el[0]).is(':checkbox') ? $() : el[0])).val() || '')) {{ $scw.each([$scw('#{3}')], function(){{{4}}})}}}}).apply(this, [$scw]) }}).triggerHandler('change');";
-
-    #endregion
-    
     #region Properties
 
     /// <summary>
@@ -52,7 +47,7 @@ namespace Morph.Forms.Rules.Actions.Client
     /// Applies the specified rule context.
     /// </summary>
     /// <param name="ruleContext">The rule context.</param>
-    public override void Apply([NotNull]T ruleContext)
+    public override void Apply([NotNull] T ruleContext)
     {
       Assert.ArgumentNotNull(ruleContext, "ruleContext");
 
@@ -65,7 +60,7 @@ namespace Morph.Forms.Rules.Actions.Client
       base.Apply(ruleContext);
     }
 
-  /// <summary>
+    /// <summary>
     /// Registers the script.
     /// </summary>
     /// <param name="control">The control.</param>
@@ -79,18 +74,34 @@ namespace Morph.Forms.Rules.Actions.Client
       }
 
       var triggerControl = this.GetChildMatchingAnyId(trigger.Controls.Flatten(), trigger.ID, trigger.ID + "scope", trigger.ID + "checkbox");
-      var observeControl = this.GetChildMatchingAnyId(control.Controls.Flatten(), control.ID, control.ID + "scope", control.ID + "checkbox");
+      var observerControl = this.GetChildMatchingAnyId(control.Controls.Flatten(), control.ID, control.ID + "scope", control.ID + "checkbox");
 
-      if (triggerControl == null || observeControl == null)
+      if (triggerControl == null || observerControl == null)
       {
         return string.Empty;
       }
 
-      return clientScriptTemplate.FormatWith(
-        triggerControl.ClientID,
-        triggerControl.UniqueID,
+      return JsCodeSnippets.OnChangeExecte(
+        JsCodeSnippets.SelectorById(triggerControl.ClientID),
+        JsCodeSnippets.SelectorByName(trigger.UniqueID), 
         this.TriggerValue,
-        observeControl.ClientID,
+        JsCodeSnippets.SelectorById(observerControl.ClientID),
+        this.BuildClientScript() ?? string.Empty);
+    }
+
+    /// <summary>
+    /// Prepares the script.
+    /// </summary>
+    /// <param name="fieldViewModel">The field view model.</param>
+    /// <returns></returns>
+    [CanBeNull]
+    protected override string PrepareScript(FieldViewModel fieldViewModel)
+    {
+      return JsCodeSnippets.OnChangeExecte(
+        JsCodeSnippets.SelectorByNameFromHiddenValue(this.Trigger),
+        JsCodeSnippets.SelectorByNameFromHiddenValue(this.TriggerValue), 
+        this.TriggerValue,
+        JsCodeSnippets.SelectorByNameFromHiddenValue(fieldViewModel.FieldItemId),
         this.BuildClientScript() ?? string.Empty);
     }
 

@@ -1,4 +1,7 @@
-﻿namespace Morph.Forms.Rules.Actions.Client
+﻿using Morph.Forms.JsCode;
+using Sitecore.Forms.Mvc.ViewModels;
+
+namespace Morph.Forms.Rules.Actions.Client
 {
   using System.Web.UI;
 
@@ -7,7 +10,6 @@
   using Sitecore;
   using Sitecore.Diagnostics;
   using Sitecore.Forms.Core.Rules;
-  using Sitecore.StringExtensions;
 
   /// <summary>
   /// Defines the changing trigger event for field class.
@@ -72,20 +74,33 @@
       }
 
       var triggerControl = this.GetChildMatchingAnyId(trigger.Controls.Flatten(), trigger.ID, trigger.ID + "scope");
-      var observeControl = this.GetChildMatchingAnyId(control.Controls.Flatten(), control.ID, control.ID + "scope");
+      var observerControl = this.GetChildMatchingAnyId(control.Controls.Flatten(), control.ID, control.ID + "scope");
 
-      if (triggerControl == null || observeControl == null)
+      if (triggerControl == null || observerControl == null)
       {
         return string.Empty;
       }
 
-      return "$scw('#{2}').change(function() {{$scw('#{0}').trigger('{1}', [$scw(this).val()])}})".FormatWith(
-        triggerControl.ClientID, 
-        this.Event, 
-        observeControl.ClientID);
+      return JsCodeSnippets.OnChangeTrigger(
+        JsCodeSnippets.SelectorById(triggerControl.ClientID),
+        JsCodeSnippets.SelectorById(observerControl.ClientID),
+        this.Event);
+    }
+
+    /// <summary>
+    /// Prepares the script.
+    /// </summary>
+    /// <param name="fieldViewModel">The field view model.</param>
+    /// <returns></returns>
+    [NotNull]
+    protected override string PrepareScript([NotNull] FieldViewModel fieldViewModel)
+    {
+      return JsCodeSnippets.OnChangeTrigger(
+        JsCodeSnippets.SelectorByNameFromHiddenValue(this.Trigger),
+        JsCodeSnippets.SelectorByNameFromHiddenValue(fieldViewModel.FieldItemId),
+        this.Event);
     }
 
     #endregion
-
   }
 }
