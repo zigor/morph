@@ -104,10 +104,14 @@ namespace Morph.Forms.Rules.Actions.Client
         .AddGetValue()
         .AddTestRegexp(this.TriggerValue2);
 
+      var contextElement = new JsCodeBuilder()
+        .AddSelectorById(observeControl.ClientID)
+        .AddFind();
+
       return new JsCodeBuilder()
         .AddSelectorById(triggerControl.ClientID, triggerControl.ClientID)
         .AddFind()
-        .AddOnChangeExecute(this.GetConditionWithExecuteCode(triggerCondition, triggerCondition2))
+        .AddOnChangeExecute(this.GetConditionWithExecuteCode(triggerCondition, triggerCondition2, contextElement))
         .ToString();
     }
 
@@ -130,10 +134,14 @@ namespace Morph.Forms.Rules.Actions.Client
         .AddGetValue()
         .AddTestRegexp(this.TriggerValue2);
       
+      var contextElement = new JsCodeBuilder()
+        .AddSelectorByNameFromHiddenValue(fieldViewModel.FieldItemId)
+        .AddFind();
+
       return new JsCodeBuilder()
         .AddSelectorByNameFromHiddenValue(this.Trigger, this.Trigger2)
         .AddFind()
-        .AddOnChangeExecute(this.GetConditionWithExecuteCode(triggerCondition, triggerCondition2))
+        .AddOnChangeExecute(this.GetConditionWithExecuteCode(triggerCondition, triggerCondition2, contextElement))
         .ToString();
     }
 
@@ -142,11 +150,12 @@ namespace Morph.Forms.Rules.Actions.Client
     /// </summary>
     /// <param name="triggerCondition">The trigger condition.</param>
     /// <param name="triggerCondition2">The trigger condition2.</param>
+    /// <param name="contextElement">The context element.</param>
     /// <returns></returns>
-    private string GetConditionWithExecuteCode(JsCodeBuilder triggerCondition, JsCodeBuilder triggerCondition2)
+    private string GetConditionWithExecuteCode(JsCodeBuilder triggerCondition, JsCodeBuilder triggerCondition2, JsCodeBuilder contextElement)
     {
       var operatorItem = Context.Database.GetItem(this.Operator);
-      var code = string.Join(string.Empty, "if (", triggerCondition, " ", operatorItem.Name == "and" ? "&&" : "||", " ", triggerCondition2, "){", this.BuildClientScript(), "}");
+      var code = string.Join(string.Empty, "if (", triggerCondition, " ", operatorItem.Name == "and" ? "&&" : "||", " ", triggerCondition2, "){", contextElement.ExecuteWithElementInThis(this.BuildClientScript()), "}");
       return code;
     }
 
