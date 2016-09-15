@@ -1,8 +1,8 @@
 ﻿namespace Morph.Forms.Rules.Actions.Client
 {
-  using System.Web.UI;
-
   using Morph.Forms.Web.UI;
+  using Morph.Forms.JsCode;
+  using Sitecore.StringExtensions;
 
   using Sitecore;
   using Sitecore.Diagnostics;
@@ -13,6 +13,11 @@
   /// </summary>
   public sealed class ChangingFieldCopyValueFromField<T> : ChangingFieldRunClientAction<T> where T : ConditionalRuleContext
   {
+    /// <summary>
+    /// The context
+    /// </summary>
+    private T context;
+
     /// <summary>
     /// Applies the specified rule context.
     /// </summary>
@@ -25,6 +30,9 @@
       {
         return;
       }
+
+      this.context = ruleContext;
+
 
       base.Apply(ruleContext);
     }
@@ -39,31 +47,6 @@
     public string Holder { get; set; }
 
     /// <summary>
-    /// Prepares the script.
-    /// </summary>
-    /// <param name="control">The control.</param>
-    /// <returns>
-    /// The script.
-    /// </returns>
-    [NotNull]
-    protected override string PrepareScript([NotNull]Control control)
-    {
-      var holder = this.GetField(control, this.Holder);
-      if (holder == null)
-      {
-        return string.Empty;
-      }
-
-      var holderControl = this.GetChildMatchingAnyId(holder.Controls.Flatten(), holder.ID, holder.ID + "scope");
-      if (holderControl == null)
-      {
-        return string.Empty;
-      }
-
-      return (base.PrepareScript(control) ?? string.Empty).Replace("{{0}}", holderControl.UniqueID);      
-    }
-
-    /// <summary>
     /// Builds the client script.
     /// </summary>
     /// <returns>
@@ -72,7 +55,54 @@
     [NotNull]
     protected override string BuildClientScript()
     {
-      return "$(this).val($($('[name=\"{{0}}\"]:checked')[0] || $('[name=\"{{0}}\"]')[0]).val())";
+      var jsCodeBuilder = this.GetElement(this.context);
+
+      if (jsCodeBuilder == null)
+      {
+        return string.Empty;
+      }
+
+      return "$(this).val({0});".FormatWith(jsCodeBuilder.AddFind().AddGetValue().ToString());
+    }
+
+    /// <summary>
+    /// Gets the element.
+    /// </summary>
+    /// <param name="ruleContext">The rule context.</param>
+    /// <returns></returns>
+    private JsCodeBuilder GetElement(T ruleContext)
+    {
+      if (ruleContext.Control != null)
+      {
+        string holderClientId = this.GetHolderClientId(ruleContext);
+        if (holderClientId != null)
+        {
+          return new JsCodeBuilder().AddSelectorById(holderClientId);
+        }
+      }
+
+      if (ruleContext.Model != null)
+      {
+        return new JsCodeBuilder().AddSelectorByNameFromHiddenValue(this.Holder);
+      }
+      return null;
+    }
+
+    /// <summary>
+    /// Gets the holder client identifier.
+    /// </summary>
+    /// <param name="ruleContext">The rule context.</param>
+    /// <returns></returns>
+    [CanBeNull]
+    private string GetHolderClientId(T ruleContext)
+    {
+      var holder = this.GetField(ruleContext.Control, this.Holder);
+      if (holder == null)
+      {
+        return null;
+      }
+      var holderControl = this.GetChildMatchingAnyId(holder.Controls.Flatten(), holder.ID, holder.ID + "scope");
+      return holderControl?.ClientID;
     }
   }
 }

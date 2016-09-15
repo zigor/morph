@@ -51,8 +51,7 @@ namespace Morph.Forms.Rules.Actions.Client
     {
       Assert.ArgumentNotNull(ruleContext, "ruleContext");
 
-      if (string.IsNullOrEmpty(this.BuildClientScript()) ||
-          string.IsNullOrEmpty(this.Trigger))
+      if (string.IsNullOrEmpty(this.Trigger))
       {
         return;
       }
@@ -81,12 +80,19 @@ namespace Morph.Forms.Rules.Actions.Client
         return string.Empty;
       }
 
-      return JsCodeSnippets.OnChangeExecte(
-        JsCodeSnippets.SelectorById(triggerControl.ClientID),
-        JsCodeSnippets.SelectorByName(trigger.UniqueID), 
-        this.TriggerValue,
-        JsCodeSnippets.SelectorById(observerControl.ClientID),
-        this.BuildClientScript() ?? string.Empty);
+      var code = new JsCodeBuilder()
+              .AddSelectorById(observerControl.ClientID)
+              .AddFind()
+              .ExecuteWithElementInThis(this.BuildClientScript())
+              .ToString();
+
+      return new JsCodeBuilder()
+              .AddSelectorById(triggerControl.ClientID)
+              .AddFind()
+              .AddOnChangeToValueExecute(this.TriggerValue, code)
+              .AddDomeReady()
+              .AddScope()
+              .ToString();
     }
 
     /// <summary>
@@ -97,12 +103,18 @@ namespace Morph.Forms.Rules.Actions.Client
     [CanBeNull]
     protected override string PrepareScript(FieldViewModel fieldViewModel)
     {
-      return JsCodeSnippets.OnChangeExecte(
-        JsCodeSnippets.SelectorByNameFromHiddenValue(this.Trigger),
-        JsCodeSnippets.SelectorByNameFromHiddenValue(this.TriggerValue), 
-        this.TriggerValue,
-        JsCodeSnippets.SelectorByNameFromHiddenValue(fieldViewModel.FieldItemId),
-        this.BuildClientScript() ?? string.Empty);
+
+      var code = new JsCodeBuilder()
+              .AddSelectorByNameFromHiddenValue(fieldViewModel.FieldItemId)
+              .AddFind()
+              .ExecuteWithElementInThis(this.BuildClientScript())
+              .ToString();
+
+      return new JsCodeBuilder()
+              .AddSelectorByNameFromHiddenValue(this.Trigger)
+              .AddFind()
+              .AddOnChangeToValueExecute(this.TriggerValue, code)
+              .ToString();
     }
 
     /// <summary>

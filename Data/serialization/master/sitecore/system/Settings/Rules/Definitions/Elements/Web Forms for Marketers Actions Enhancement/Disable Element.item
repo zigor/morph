@@ -8,6 +8,7 @@ name: Disable Element
 master: {00000000-0000-0000-0000-000000000000}
 template: {F90052A5-B4E6-4E6D-9812-1E1B88A6FCEA}
 templatekey: Action
+created: 20160912T091354:636092684344000000
 
 ----field----
 field: {FF55D5A7-6D4B-4CD1-83E0-BAC268073F66}
@@ -15,7 +16,7 @@ name: Type
 key: type
 content-length: 59
 
-Morph.Forms.Rules.Actions.Server.DisableElement,Morph.Forms
+Morph.Forms.Rules.Actions.Client.DisableElement,Morph.Forms
 ----field----
 field: {BA3F86A2-4A1C-4D78-B63D-91C2779C1B5E}
 name: __Sortorder
@@ -26,7 +27,7 @@ content-length: 3
 ----version----
 language: en
 version: 1
-revision: d888145d-b815-4ba3-9d3b-a213f261521a
+revision: 0773a133-74f3-4183-974f-0387469acb02
 
 ----field----
 field: {EEB36A3B-40D9-4AF5-862A-DE257B84DCA3}
@@ -62,21 +63,21 @@ name: __Revision
 key: __revision
 content-length: 36
 
-d888145d-b815-4ba3-9d3b-a213f261521a
+0773a133-74f3-4183-974f-0387469acb02
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 16
 
-20131217T163630:635228949908547956
+20160915T094612Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
 key: __updated by
-content-length: 18
+content-length: 14
 
-extranet\Anonymous
+sitecore\admin
 ----field----
 field: {001DD393-96C5-490B-924A-B0F25CD9EFD8}
 name: __Lock

@@ -1,4 +1,6 @@
-﻿namespace Morph.Forms.Rules.Actions.Client
+﻿using Sitecore.Forms.Mvc.ViewModels;
+
+namespace Morph.Forms.Rules.Actions.Client
 {
   using Sitecore;
   using Sitecore.Forms.Core.Rules;
@@ -9,6 +11,11 @@
   /// <typeparam name="T"></typeparam>
   public class ChangingFieldsHideCurrentField<T> : ChangingFieldsRunClientAction<T> where T : ConditionalRuleContext
   {
+    /// <summary>
+    /// The model
+    /// </summary>
+    private FieldViewModel model;
+
     #region Methods
 
     /// <summary>
@@ -25,6 +32,8 @@
 
       disableValidation.Apply(ruleContext);
 
+      this.model = ruleContext.Model as FieldViewModel;
+
       base.Apply(ruleContext);
     }
 
@@ -37,6 +46,10 @@
     [NotNull]
     protected override string BuildClientScript()
     {
+      if (this.model != null)
+      {
+        return "$(this).closest('.form-group').hide();$(this).prop('disabled', 'true')";
+      }
       return "$(this).parent().parent().hide();";
     }
 

@@ -81,10 +81,15 @@ namespace Morph.Forms.Rules.Actions.Client
         return string.Empty;
       }
 
-      return JsCodeSnippets.OnChangeTrigger(
-        JsCodeSnippets.SelectorById(triggerControl.ClientID),
-        JsCodeSnippets.SelectorById(observerControl.ClientID),
-        this.Event);
+      var code = new JsCodeBuilder()
+              .AddSelectorById(observerControl.ClientID)
+              .AddFind()
+              .AddTriggerEvent(this.Event).ToString();
+
+      return new JsCodeBuilder()
+              .AddSelectorById(trigger.ClientID)
+              .AddFind()
+              .AddOnChangeToValueExecute(".*", code).ToString();        
     }
 
     /// <summary>
@@ -95,10 +100,15 @@ namespace Morph.Forms.Rules.Actions.Client
     [NotNull]
     protected override string PrepareScript([NotNull] FieldViewModel fieldViewModel)
     {
-      return JsCodeSnippets.OnChangeTrigger(
-        JsCodeSnippets.SelectorByNameFromHiddenValue(this.Trigger),
-        JsCodeSnippets.SelectorByNameFromHiddenValue(fieldViewModel.FieldItemId),
-        this.Event);
+      var code = new JsCodeBuilder()
+              .AddSelectorByNameFromHiddenValue(this.Trigger)
+              .AddFind()
+              .AddTriggerEvent(this.Event).ToString();
+
+      return new JsCodeBuilder()
+              .AddSelectorByNameFromHiddenValue(fieldViewModel.FieldItemId)
+              .AddFind()
+              .AddOnChangeToValueExecute(".*", code).ToString();
     }
 
     #endregion
