@@ -30,15 +30,26 @@ namespace Morph.Forms.JsCode
     {
       this.jsCode.Append(jsScript);
     }
-    
+
     /// <summary>
     /// Adds the selector by identifier.
     /// </summary>
-    /// <param name="id">The identifier.</param>
+    /// <param name="ids">The ids.</param>
     /// <returns></returns>
-    public JsCodeBuilder AddSelectorById(string id)
+    public JsCodeBuilder AddSelectorById(params string[] ids)
     {
-      this.jsCode.AppendFormat("#{0}", id);
+      bool isFirst = true;
+      foreach (var id in ids)
+      {
+        if (!isFirst)
+        {
+          this.jsCode.AppendFormat(", ");
+        }
+
+        this.jsCode.AppendFormat("#{0}", id);
+
+        isFirst = false;
+      }
       return this;
     }
 
@@ -56,11 +67,22 @@ namespace Morph.Forms.JsCode
     /// <summary>
     /// Adds the selector by name from hidden value.
     /// </summary>
-    /// <param name="elementNameValue">The element name value.</param>
+    /// <param name="elementNameValues">The element name values.</param>
     /// <returns></returns>
-    public JsCodeBuilder AddSelectorByNameFromHiddenValue(string elementNameValue)
-    {     
-      this.jsCode.AppendFormat("[name=\"' + $('input:hidden[value=\"{0}\"]').attr('name').replace(/.Id$/, '.Value') + '\"]", elementNameValue);
+    public JsCodeBuilder AddSelectorByNameFromHiddenValue(params string[] elementNameValues)
+    {
+      bool isFirst = true;
+      foreach (var value in elementNameValues)
+      {
+        if (!isFirst)
+        {
+          this.jsCode.AppendFormat(", ");
+        }
+
+        this.jsCode.AppendFormat("[name=\"' + $('input:hidden[value=\"{0}\"]').attr('name').replace(/.Id$/, '.Value') + '\"]", value);
+
+        isFirst = false;
+      }
       return this;
     }
     
@@ -151,6 +173,17 @@ namespace Morph.Forms.JsCode
     }
 
     /// <summary>
+    /// Adds the test regexp.
+    /// </summary>
+    /// <param name="pattern">The pattern.</param>
+    /// <returns></returns>
+    public JsCodeBuilder AddTestRegexp(string pattern)
+    {
+      this.jsCode.AppendFormat(".test('{0}')", pattern);
+      return this;
+    }
+
+    /// <summary>
     /// Adds the make element disabled.
     /// </summary>
     /// <returns></returns>
@@ -182,6 +215,17 @@ namespace Morph.Forms.JsCode
     public JsCodeBuilder AddOnChangeToValueExecute(string value, string execute)
     {
       this.jsCode.AppendFormat(".change(function(){{ if( new RegExp('{0}').test($(this).filter(function(i, e){{ return $(e).is(':radio, :checkbox') ? $(e).is(':checked') : true }}).val())) {{ {1} }}}}).trigger('change');", value, execute);
+      return this;
+    }
+
+    /// <summary>
+    /// Adds the on change execute.
+    /// </summary>
+    /// <param name="execute">The execute.</param>
+    /// <returns></returns>
+    public JsCodeBuilder AddOnChangeExecute(string execute)
+    {
+      this.jsCode.AppendFormat(".change(function(){{  {0} }}).trigger('change');", execute);
       return this;
     }
 

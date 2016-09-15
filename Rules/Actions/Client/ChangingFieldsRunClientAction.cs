@@ -1,54 +1,45 @@
-﻿namespace Morph.Forms.Rules.Actions.Client
+﻿using System.Web.UI;
+using Morph.Forms.JsCode;
+using Morph.Forms.Web.UI;
+using Sitecore;
+using Sitecore.Diagnostics;
+using Sitecore.Forms.Core.Rules;
+using Sitecore.Forms.Mvc.ViewModels;
+
+namespace Morph.Forms.Rules.Actions.Client
 {
-  using System.Web.UI;
-
-  using Morph.Forms.Web.UI;
-
-  using Sitecore;
-  using Sitecore.Diagnostics;
-  using Sitecore.Forms.Core.Rules;
-  using Sitecore.StringExtensions;
-
   /// <summary>
-  /// Defines the changing fields run script class.
+  ///   Defines the changing fields run script class.
   /// </summary>
   /// <typeparam name="T"></typeparam>
-  public abstract class ChangingFieldsRunClientAction<T> : ChangingFieldRunClientAction<T> where T : ConditionalRuleContext
+  public abstract class ChangingFieldsRunClientAction<T> : ChangingFieldRunClientAction<T>
+    where T : ConditionalRuleContext
   {
-    #region Fields
-
-    /// <summary>
-    /// The client script template
-    /// </summary>
-    private readonly static string clientScriptTemplate = "$scw('#{3}').change(function(){{$scw('[name=\"{1}\"]').first().trigger('change')}});$scw('#{0}').change(function(){{(function d($) {{var el1=$('[name=\"{1}\"]'); el2=$('[name=\"{4}\"]'); if (new RegExp('{2}').test($(el1.filter(':checked')[0] || ($(el1[0]).is(':checkbox') ? $() : el1[0])).val() || '') {6} new RegExp('{5}').test($(el2.filter(':checked')[0] || ($(el2[0]).is(':checkbox') ? $() : el2[0])).val() || '')) {{ $scw.each([$scw('#{7}')], function(){{{8}}})}};}}).apply(this, [$scw])}}).triggerHandler('change');";
-
-    #endregion
-
     #region Properties
 
     /// <summary>
-    /// Gets or sets the trigger2.
+    ///   Gets or sets the trigger2.
     /// </summary>
     /// <value>
-    /// The trigger2.
+    ///   The trigger2.
     /// </value>
     [CanBeNull]
     public string Trigger2 { get; set; }
 
     /// <summary>
-    /// Gets or sets the trigger value2.
+    ///   Gets or sets the trigger value2.
     /// </summary>
     /// <value>
-    /// The trigger value2.
+    ///   The trigger value2.
     /// </value>
     [CanBeNull]
     public string TriggerValue2 { get; set; }
 
     /// <summary>
-    /// Gets or sets the operator.
+    ///   Gets or sets the operator.
     /// </summary>
     /// <value>
-    /// The operator.
+    ///   The operator.
     /// </value>
     [CanBeNull]
     public string Operator { get; set; }
@@ -58,7 +49,7 @@
     #region Methods
 
     /// <summary>
-    /// Applies the specified rule context.
+    ///   Applies the specified rule context.
     /// </summary>
     /// <param name="ruleContext">The rule context.</param>
     public override void Apply([NotNull] T ruleContext)
@@ -74,18 +65,18 @@
     }
 
     /// <summary>
-    /// Prepares the script.
+    ///   Prepares the script.
     /// </summary>
     /// <param name="control">The control.</param>
     /// <returns>
-    /// The script.
+    ///   The script.
     /// </returns>
     [NotNull]
     protected override string PrepareScript([NotNull] Control control)
     {
-      Control trigger = this.GetField(control, this.Trigger);
-      Control trigger2 = this.GetField(control, this.Trigger2);
-      if (trigger == null || trigger2 == null || control.Page == null || Context.Database == null)
+      var trigger = this.GetField(control, this.Trigger);
+      var trigger2 = this.GetField(control, this.Trigger2);
+      if ((trigger == null) || (trigger2 == null) || (control.Page == null) || (Context.Database == null))
       {
         return string.Empty;
       }
@@ -96,21 +87,67 @@
 
       var operatorItem = Context.Database.GetItem(this.Operator);
 
-      if (triggerControl == null || triggerControl2 == null || observeControl == null || operatorItem == null)
+      if ((triggerControl == null) || (triggerControl2 == null) || (observeControl == null) || (operatorItem == null))
       {
         return string.Empty;
       }
 
-      return clientScriptTemplate.FormatWith(
-        triggerControl.ClientID,
-        triggerControl.UniqueID,
-        this.TriggerValue,
-        triggerControl2.ClientID,
-        triggerControl2.UniqueID,
-        this.TriggerValue2,
-        operatorItem.Name == "and" ? "&&" : "||",
-        observeControl.ClientID,
-        this.BuildClientScript() ?? string.Empty);
+      var triggerCondition = new JsCodeBuilder()
+        .AddSelectorById(triggerControl.ClientID)
+        .AddFind()
+        .AddGetValue()
+        .AddTestRegexp(this.TriggerValue);
+
+      var triggerCondition2 = new JsCodeBuilder()
+        .AddSelectorById(triggerControl2.ClientID)
+        .AddFind()
+        .AddGetValue()
+        .AddTestRegexp(this.TriggerValue2);
+
+      return new JsCodeBuilder()
+        .AddSelectorById(triggerControl.ClientID, triggerControl.ClientID)
+        .AddFind()
+        .AddOnChangeExecute(this.GetConditionWithExecuteCode(triggerCondition, triggerCondition2))
+        .ToString();
+    }
+
+    /// <summary>
+    ///   Prepares the script.
+    /// </summary>
+    /// <param name="fieldViewModel">The field view model.</param>
+    /// <returns></returns>
+    protected override string PrepareScript(FieldViewModel fieldViewModel)
+    {
+      var triggerCondition = new JsCodeBuilder()
+        .AddSelectorByNameFromHiddenValue(this.Trigger)
+        .AddFind()
+        .AddGetValue()
+        .AddTestRegexp(this.TriggerValue);
+
+      var triggerCondition2 = new JsCodeBuilder()
+        .AddSelectorByNameFromHiddenValue(this.Trigger2)
+        .AddFind()
+        .AddGetValue()
+        .AddTestRegexp(this.TriggerValue2);
+      
+      return new JsCodeBuilder()
+        .AddSelectorByNameFromHiddenValue(this.Trigger, this.Trigger2)
+        .AddFind()
+        .AddOnChangeExecute(this.GetConditionWithExecuteCode(triggerCondition, triggerCondition2))
+        .ToString();
+    }
+
+    /// <summary>
+    /// Gets the condition with execute code.
+    /// </summary>
+    /// <param name="triggerCondition">The trigger condition.</param>
+    /// <param name="triggerCondition2">The trigger condition2.</param>
+    /// <returns></returns>
+    private string GetConditionWithExecuteCode(JsCodeBuilder triggerCondition, JsCodeBuilder triggerCondition2)
+    {
+      var operatorItem = Context.Database.GetItem(this.Operator);
+      var code = string.Join(string.Empty, "if (", triggerCondition, " ", operatorItem.Name == "and" ? "&&" : "||", " ", triggerCondition2, "){", this.BuildClientScript(), "}");
+      return code;
     }
 
     #endregion
