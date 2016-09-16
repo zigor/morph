@@ -2,6 +2,7 @@ using System;
 using Morph.Forms.JsCode;
 using Sitecore.Data;
 using Sitecore.Forms.Mvc.ViewModels;
+using Sitecore.StringExtensions;
 
 namespace Morph.Forms.Rules.Actions.Client
 {
@@ -63,58 +64,23 @@ namespace Morph.Forms.Rules.Actions.Client
     /// Registers the script.
     /// </summary>
     /// <param name="control">The control.</param>
+    /// <param name="model">The model.</param>
+    /// <returns>
+    /// The script.
+    /// </returns>
     [CanBeNull]
-    protected override string PrepareScript([NotNull] Control control)
+    protected override string PrepareScript([CanBeNull] Control control, [CanBeNull]FieldViewModel model)
     {
-      Control trigger = this.GetField(control, this.Trigger);
-      if (trigger == null || control.Page == null)
+      var triggerSelector = this.GetClientElementSelector(this.GetField(control, this.Trigger), this.Trigger);
+      var observerSelector = this.GetClientElementSelector(control, model?.FieldItemId);
+
+
+      if (string.IsNullOrEmpty(triggerSelector) || string.IsNullOrEmpty(observerSelector))
       {
         return string.Empty;
       }
 
-      var triggerControl = this.GetChildMatchingAnyId(trigger.Controls.Flatten(), trigger.ID, trigger.ID + "scope", trigger.ID + "checkbox");
-      var observerControl = this.GetChildMatchingAnyId(control.Controls.Flatten(), control.ID, control.ID + "scope", control.ID + "checkbox");
-
-      if (triggerControl == null || observerControl == null)
-      {
-        return string.Empty;
-      }
-
-      var code = new JsCodeBuilder()
-              .AddSelectorById(observerControl.ClientID)
-              .AddFind()
-              .ExecuteWithElementInThis(this.BuildClientScript())
-              .ToString();
-
-      return new JsCodeBuilder()
-              .AddSelectorById(triggerControl.ClientID)
-              .AddFind()
-              .AddOnChangeToValueExecute(this.TriggerValue, code)
-              .AddDomeReady()
-              .AddScope()
-              .ToString();
-    }
-
-    /// <summary>
-    /// Prepares the script.
-    /// </summary>
-    /// <param name="fieldViewModel">The field view model.</param>
-    /// <returns></returns>
-    [CanBeNull]
-    protected override string PrepareScript(FieldViewModel fieldViewModel)
-    {
-
-      var code = new JsCodeBuilder()
-              .AddSelectorByNameFromHiddenValue(fieldViewModel.FieldItemId)
-              .AddFind()
-              .ExecuteWithElementInThis(this.BuildClientScript())
-              .ToString();
-
-      return new JsCodeBuilder()
-              .AddSelectorByNameFromHiddenValue(this.Trigger)
-              .AddFind()
-              .AddOnChangeToValueExecute(this.TriggerValue, code)
-              .ToString();
+      return JsCode.InlineJs.OnChangeToValueForElementExecuteCode.FormatWith(triggerSelector, this.TriggerValue, observerSelector, this.BuildClientScript());      
     }
 
     /// <summary>

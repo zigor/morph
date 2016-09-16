@@ -114,7 +114,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\Constants.cs" />
-    <Compile Include="JsCode\JsCodeBuilder.cs" />
+    <Compile Include="JsCode\InlineJs.cs" />
     <Compile Include="Pipelines\RenderRendering\AddScriptsForMvcFormRendering.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rules\Actions\Client\ChangingFieldClearValue.cs" />

@@ -1,4 +1,5 @@
 ﻿using Sitecore;
+using Sitecore.StringExtensions;
 
 namespace Morph.Forms.Pipelines.RenderRendering
 {
@@ -44,7 +45,8 @@ namespace Morph.Forms.Pipelines.RenderRendering
       {
         return;
       }
-      var onStartupScript = new JsCodeBuilder(script).AddDomeReady().AddScope().AddScriptTag().ToString();
+      var onStartupScript = InlineJs.SafeScriptWrapping.FormatWith(script);
+
       writer.Write(onStartupScript);      
     }
   }

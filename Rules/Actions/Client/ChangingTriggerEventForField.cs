@@ -1,5 +1,6 @@
 ﻿using Morph.Forms.JsCode;
 using Sitecore.Forms.Mvc.ViewModels;
+using Sitecore.StringExtensions;
 
 namespace Morph.Forms.Rules.Actions.Client
 {
@@ -15,8 +16,13 @@ namespace Morph.Forms.Rules.Actions.Client
   /// Defines the changing trigger event for field class.
   /// </summary>
   /// <typeparam name="T"></typeparam>
-  public class ChangingTriggerEventForField<T> : ClientAction<T> where T : ConditionalRuleContext
+  public class ChangingTriggerEventForField<T> : ChangingFieldRunClientAction<T> where T : ConditionalRuleContext
   {
+    /// <summary>
+    /// The context
+    /// </summary>
+    private T context;
+
     #region Properties
 
     /// <summary>
@@ -27,15 +33,6 @@ namespace Morph.Forms.Rules.Actions.Client
     /// </value>
     [CanBeNull]
     public string Event { get; set; }
-
-    /// <summary>
-    /// Gets or sets the trigger.
-    /// </summary>
-    /// <value>
-    /// The trigger.
-    /// </value>
-    [CanBeNull]
-    public string Trigger { get; set; }
 
     #endregion
 
@@ -53,62 +50,23 @@ namespace Morph.Forms.Rules.Actions.Client
       {
         return;
       }
-
+      this.context = ruleContext;
+      this.TriggerValue = ".*";
       base.Apply(ruleContext);
     }
 
+
     /// <summary>
-    /// Prepares the script.
+    /// Builds the client script.
     /// </summary>
-    /// <param name="control">The control.</param>
     /// <returns>
-    /// The script.
+    /// The client script.
     /// </returns>
-    [NotNull]
-    protected override string PrepareScript([NotNull] Control control)
+    protected override string BuildClientScript()
     {
-      Control trigger = this.GetField(control, this.Trigger);
-      if (trigger == null || control.Page == null)
-      {
-        return string.Empty;
-      }
+      var selector = this.GetClientElementSelector(this.context?.Control, ((FieldViewModel) this.context?.Model)?.FieldItemId);
 
-      var triggerControl = this.GetChildMatchingAnyId(trigger.Controls.Flatten(), trigger.ID, trigger.ID + "scope");
-      var observerControl = this.GetChildMatchingAnyId(control.Controls.Flatten(), control.ID, control.ID + "scope");
-
-      if (triggerControl == null || observerControl == null)
-      {
-        return string.Empty;
-      }
-
-      var code = new JsCodeBuilder()
-              .AddSelectorById(observerControl.ClientID)
-              .AddFind()
-              .AddTriggerEvent(this.Event).ToString();
-
-      return new JsCodeBuilder()
-              .AddSelectorById(trigger.ClientID)
-              .AddFind()
-              .AddOnChangeToValueExecute(".*", code).ToString();        
-    }
-
-    /// <summary>
-    /// Prepares the script.
-    /// </summary>
-    /// <param name="fieldViewModel">The field view model.</param>
-    /// <returns></returns>
-    [NotNull]
-    protected override string PrepareScript([NotNull] FieldViewModel fieldViewModel)
-    {
-      var code = new JsCodeBuilder()
-              .AddSelectorByNameFromHiddenValue(this.Trigger)
-              .AddFind()
-              .AddTriggerEvent(this.Event).ToString();
-
-      return new JsCodeBuilder()
-              .AddSelectorByNameFromHiddenValue(fieldViewModel.FieldItemId)
-              .AddFind()
-              .AddOnChangeToValueExecute(".*", code).ToString();
+      return "$('{0}').trigger('{1}');".FormatWith(selector, this.Event);
     }
 
     #endregion

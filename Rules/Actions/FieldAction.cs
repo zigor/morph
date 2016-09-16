@@ -30,23 +30,14 @@ namespace Morph.Forms.Rules.Actions
     /// The trigger field.
     /// </returns>
     [CanBeNull]
-    protected Control GetField([NotNull] Control context, [CanBeNull] string id)
+    protected Control GetField([CanBeNull] Control context, [CanBeNull] string id)
     {
-      Assert.ArgumentNotNull(context, "context");
-
       if (string.IsNullOrEmpty(id))
       {
         return null;
       }
 
-      var parent = context.Page;
-
-      if (parent == null)
-      {
-        return null;
-      }
-
-      return parent.Controls.Flatten().OfType<BaseControl>().FirstOrDefault(c => c.FieldID == id);
+      return context?.Page?.Controls.Flatten().OfType<BaseControl>().FirstOrDefault(c => c.FieldID == id);
     }
 
     /// <summary>

@@ -55,54 +55,14 @@
     [NotNull]
     protected override string BuildClientScript()
     {
-      var jsCodeBuilder = this.GetElement(this.context);
-
-      if (jsCodeBuilder == null)
+      var holderSelector = this.GetClientElementSelector(this.GetField(this.context.Control, this.Holder), this.Holder);
+      
+      if (string.IsNullOrEmpty(holderSelector))
       {
         return string.Empty;
       }
 
-      return "$(this).val({0});".FormatWith(jsCodeBuilder.AddFind().AddGetValue().ToString());
-    }
-
-    /// <summary>
-    /// Gets the element.
-    /// </summary>
-    /// <param name="ruleContext">The rule context.</param>
-    /// <returns></returns>
-    private JsCodeBuilder GetElement(T ruleContext)
-    {
-      if (ruleContext.Control != null)
-      {
-        string holderClientId = this.GetHolderClientId(ruleContext);
-        if (holderClientId != null)
-        {
-          return new JsCodeBuilder().AddSelectorById(holderClientId);
-        }
-      }
-
-      if (ruleContext.Model != null)
-      {
-        return new JsCodeBuilder().AddSelectorByNameFromHiddenValue(this.Holder);
-      }
-      return null;
-    }
-
-    /// <summary>
-    /// Gets the holder client identifier.
-    /// </summary>
-    /// <param name="ruleContext">The rule context.</param>
-    /// <returns></returns>
-    [CanBeNull]
-    private string GetHolderClientId(T ruleContext)
-    {
-      var holder = this.GetField(ruleContext.Control, this.Holder);
-      if (holder == null)
-      {
-        return null;
-      }
-      var holderControl = this.GetChildMatchingAnyId(holder.Controls.Flatten(), holder.ID, holder.ID + "scope");
-      return holderControl?.ClientID;
+      return "$(this).val({0});".FormatWith(InlineJs.GetValue.FormatWith(holderSelector));
     }
   }
 }

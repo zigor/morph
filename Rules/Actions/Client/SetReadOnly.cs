@@ -1,4 +1,6 @@
-﻿namespace Morph.Forms.Rules.Actions.Client
+﻿using Sitecore.StringExtensions;
+
+namespace Morph.Forms.Rules.Actions.Client
 {
   using System;
   using System.Linq;
@@ -42,16 +44,20 @@
     /// <summary>
     /// Prepares the script.
     /// </summary>
+    /// <param name="control">The control.</param>
     /// <param name="fieldViewModel">The field view model.</param>
     /// <returns></returns>
     /// <exception cref="System.NotImplementedException"></exception>
-    protected override string PrepareScript(FieldViewModel fieldViewModel)
+    protected override string PrepareScript([CanBeNull]Control control, [CanBeNull]FieldViewModel fieldViewModel)
     {
-      return new JsCodeBuilder()
-        .AddSelectorByNameFromHiddenValue(fieldViewModel.FieldItemId)
-        .AddFind()
-        .AddMakeElementReadOnly()
-        .ToString();
+      var selector = this.GetClientElementSelector(null, fieldViewModel?.FieldItemId);
+
+      if (control != null || string.IsNullOrEmpty(selector))
+      {
+        return null;
+      }
+
+      return "$('{0}').prop('readonly', 'true');".FormatWith(selector);
     }
 
     /// <summary>

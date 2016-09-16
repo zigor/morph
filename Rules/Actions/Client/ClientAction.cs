@@ -9,6 +9,8 @@ namespace Morph.Forms.Rules.Actions.Client
   using Sitecore.StringExtensions;
   using System.Web.UI;
   using Morph.Forms.Configuration;
+  using Morph.Forms.JsCode;
+  using Morph.Forms.Web.UI;
 
   /// <summary>
   ///   Defines the client action class.
@@ -33,36 +35,26 @@ namespace Morph.Forms.Rules.Actions.Client
 
       if (ruleContext.Control != null)
       {
-        ruleContext.Control.PreRender += (s, e) => RegisterScript(ruleContext.Control, this.PrepareScript(ruleContext.Control));
+        ruleContext.Control.PreRender += (s, e) => RegisterScript(ruleContext.Control, this.PrepareScript(ruleContext.Control, null));
       }
 
       var fieldModel = ruleContext.Model as FieldViewModel;
       if (fieldModel != null)
       {
-        this.RegisterScript(fieldModel, this.PrepareScript(fieldModel));
+        this.RegisterScript(fieldModel, this.PrepareScript(null, fieldModel));
       }
-    }
-
-    /// <summary>
-    ///   Prepares the script.
-    /// </summary>
-    /// <param name="control">The control.</param>
-    /// <returns>
-    ///   The script.
-    /// </returns>
-    [CanBeNull]
-    protected virtual string PrepareScript([NotNull] Control control)
-    {
-      return string.Empty;
     }
 
     /// <summary>
     /// Prepares the script.
     /// </summary>
-    /// <param name="fieldViewModel">The field view model.</param>
-    /// <returns></returns>
+    /// <param name="control">The control.</param>
+    /// <param name="model">The model.</param>
+    /// <returns>
+    /// The script.
+    /// </returns>
     [CanBeNull]
-    protected virtual string PrepareScript(FieldViewModel fieldViewModel)
+    protected virtual string PrepareScript([CanBeNull] Control control, [CanBeNull]FieldViewModel model)
     {
       return string.Empty;
     }
@@ -82,6 +74,27 @@ namespace Morph.Forms.Rules.Actions.Client
       }
 
       ScriptManager.RegisterStartupScript(control, typeof(Page), script, script, true);
+    }
+
+    /// <summary>
+    /// Gets the client element selector.
+    /// </summary>
+    /// <param name="control">The control.</param>
+    /// <param name="fieldId">The field identifier.</param>
+    /// <returns></returns>
+    [CanBeNull]
+    protected string GetClientElementSelector([CanBeNull]Control control = null, [CanBeNull]string fieldId = null)
+    {
+      if (control?.Page != null)
+      {
+        var clientControl = this.GetChildMatchingAnyId(control.Controls.Flatten(), control.ID, control.ID + "scope", control.ID + "checkbox");
+        return InlineJs.SelectorById.FormatWith(clientControl.ClientID);
+      }
+      if (!string.IsNullOrEmpty(fieldId))
+      {
+        return InlineJs.SelectorByNameFromHiddenValue.FormatWith(fieldId);
+      }
+      return null;
     }
 
     /// <summary>

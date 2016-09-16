@@ -1,4 +1,5 @@
 ﻿using Morph.Forms.JsCode;
+using Sitecore.StringExtensions;
 
 namespace Morph.Forms.Rules.Actions.Client
 {
@@ -73,22 +74,20 @@ namespace Morph.Forms.Rules.Actions.Client
     /// <summary>
     /// Prepares the script.
     /// </summary>
+    /// <param name="control">The control.</param>
     /// <param name="fieldViewModel">The field view model.</param>
     /// <returns></returns>
-    protected override string PrepareScript(FieldViewModel fieldViewModel)
+    protected override string PrepareScript([CanBeNull]Control control, [CanBeNull]FieldViewModel fieldViewModel)
     {
-      var value = new JsCodeBuilder()
-              .AddSelectorByNameFromHiddenValue(this.FieldId)
-              .AddFind()
-              .AddGetValue()
-              .AddMatchRegexp(this.Pattern)
-              .ToString();
+      var copyFromSelector = this.GetClientElementSelector(null, this.FieldId);
+      var copyToSelector = this.GetClientElementSelector(null, fieldViewModel?.FieldItemId);
 
-      return new JsCodeBuilder()
-              .AddSelectorByNameFromHiddenValue(fieldViewModel.FieldItemId)
-              .AddFind()
-              .AddSetValue(value)
-              .ToString();
+      if (control != null || string.IsNullOrEmpty(copyFromSelector) || string.IsNullOrEmpty(copyToSelector))
+      {
+        return null;
+      }
+      return "(function() { var v = {0}; if (v.test('{1}')) {{ $('{2}').val(v) }} })()"
+        .FormatWith(JsCode.InlineJs.GetValue.FormatWith(copyFromSelector), this.Pattern, copyToSelector);
     }
 
     /// <summary>

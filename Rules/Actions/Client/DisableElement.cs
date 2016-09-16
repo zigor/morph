@@ -1,4 +1,7 @@
-﻿namespace Morph.Forms.Rules.Actions.Client
+﻿using System.Web.UI;
+using Sitecore.StringExtensions;
+
+namespace Morph.Forms.Rules.Actions.Client
 {
   using System.Web.UI.WebControls;
 
@@ -41,15 +44,19 @@
     /// <summary>
     /// Prepares the script.
     /// </summary>
+    /// <param name="control">The control.</param>
     /// <param name="fieldViewModel">The field view model.</param>
     /// <returns></returns>
-    protected override string PrepareScript(FieldViewModel fieldViewModel)
+    protected override string PrepareScript([CanBeNull]Control control, [CanBeNull]FieldViewModel fieldViewModel)
     {
-      return new JsCodeBuilder()
-        .AddSelectorByNameFromHiddenValue(fieldViewModel.FieldItemId)
-        .AddFind()
-        .AddMakeElementDisabled()
-        .ToString();
+      var selector = this.GetClientElementSelector(null, fieldViewModel?.FieldItemId);
+
+      if (control != null || string.IsNullOrEmpty(selector))
+      {
+        return null;
+      }
+
+      return "$('{0}').prop('disabled', 'true');".FormatWith(selector);
     }
 
     #endregion
