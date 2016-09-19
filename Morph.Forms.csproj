@@ -114,9 +114,8 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ActionResults\FormActionResult.cs" />
+    <Compile Include="ActionResults\JsEmbededFormActionResult.cs" />
     <Compile Include="Configuration\Constants.cs" />
-    <Compile Include="Controllers\FormController.cs" />
     <Compile Include="Filters\AddJsToActionResultFilterAttribute.cs" />
     <Compile Include="Filters\ApplyRulesToFormViewModelAttribute.cs" />
     <Compile Include="JsCode\InlineJs.cs" />
@@ -186,9 +185,6 @@
     <None Include="web.Release.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
