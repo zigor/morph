@@ -1,3 +1,4 @@
+using System.Web;
 using Sitecore;
 
 namespace Morph.Forms.Rules.Actions.Client
@@ -111,7 +112,8 @@ namespace Morph.Forms.Rules.Actions.Client
       {
         return;
       }
-      RenderingContext.Current.Rendering.Properties[Constants.MvcWebFormRulesScriptKey] += script;
+
+      Sitecore.Context.Items[Constants.MvcWebFormRulesScriptKey] += script;
     }
 
     #endregion

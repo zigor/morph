@@ -1,16 +1,13 @@
-﻿using System.Web.UI;
-using Sitecore.StringExtensions;
-
-namespace Morph.Forms.Rules.Actions.Client
+﻿namespace Morph.Forms.Rules.Actions.Client
 {
   using System.Web.UI.WebControls;
+  using System.Web.UI;
+  using Sitecore.StringExtensions;
 
-  using Sitecore;
   using Sitecore.Diagnostics;
   using Sitecore.Forms.Core.Rules;
   using Sitecore.Forms.Mvc.ViewModels;
-
-  using Morph.Forms.JsCode;
+  using Sitecore;
 
   /// <summary>
   /// Defines the hide element inputs class.

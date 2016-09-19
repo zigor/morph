@@ -1,12 +1,9 @@
-﻿namespace Morph.Forms.Rules.Actions.Client
+﻿using Morph.Forms.Models;
+using Sitecore.Forms.Mvc.ViewModels;
+
+namespace Morph.Forms.Rules.Actions.Client
 {
-  using System.Linq;
-  using System.Text.RegularExpressions;
   using System.Web.UI;
-  using System.Web.UI.WebControls;
-
-  using Morph.Forms.Web.UI;
-
   using Sitecore;
   using Sitecore.Diagnostics;
   using Sitecore.Form.Web.UI.Controls;
@@ -67,11 +64,34 @@
       base.Apply(ruleContext);
     }
 
+    protected override void DisableValidationOnSubmit(RuleContextModel model)
+    {
+      var operatorItem = Context.Database.GetItem(this.Operator);
+
+      if (operatorItem == null)
+      {
+        return;
+      }
+
+      var match = this.Match(this.GetValue(model, this.Trigger2), this.TriggerValue2);
+
+      if (match && operatorItem.Name == "and" || !match && operatorItem.Name != "and")
+      {
+        base.DisableValidationOnSubmit(model);
+        return;
+      }
+
+      if (match)
+      {
+        base.DisableValidationOnSubmit(model);
+      }
+    }
+
     /// <summary>
     /// Called when the fields has loaded.
     /// </summary>
     /// <param name="context">The context.</param>
-    protected override void OnFieldsLoaded([NotNull] Control context)
+    protected override void DisableValidationOnSubmit([NotNull] Control context)
     {
       Assert.ArgumentNotNull(context, "context");
 
@@ -83,29 +103,19 @@
         return;
       }
 
-      var match = new Regex(this.TriggerValue2 ?? string.Empty).Match((trigger2.Result.Value ?? string.Empty).ToString());
-
-      if (match.Success && operatorItem.Name == "and")
+      var match = this.Match(trigger2.Result.Value, this.TriggerValue2);
+      if (match && operatorItem.Name == "and" || !match && operatorItem.Name != "and")
       {
-        base.OnFieldsLoaded(context);
+        base.DisableValidationOnSubmit(context);
         return;
       }
       
-
-      if (match.Success)
+      if (match)
       {
-        foreach (var validator in context.Controls.Flatten().OfType<BaseValidator>())
-        {
-          validator.Enabled = false;
-        }
-      }
-      else if (operatorItem.Name != "and")
-      {
-        base.OnFieldsLoaded(context);
+        this.DisableValidation(context, null);
       }
     }
 
     #endregion
-
   }
 }
