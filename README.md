@@ -53,3 +53,7 @@ Selection-dependent input is implemented as a set of Web Forms for Marketers fie
 
 ## Compatibility
 The extensions for the Web Forms for Marketers module supports both ASP.NET Web Forms and MVC engines
+
+## Examples
+The example of client side actions usage is described in the [document] (https://github.com/zigor/morph/raw/master/doc/Selection-dependent%20inputs.docx)
+
