@@ -40,7 +40,7 @@ namespace Morph.Forms.Rules.Actions.Client
     [CanBeNull]
     public string TriggerValue { get; set; }
 
-    #endregion
+    #endregion;
 
     #region Methods
 

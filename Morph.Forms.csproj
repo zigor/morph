@@ -177,14 +177,7 @@
     <None Include="Data\serialization\master\sitecore\system\Settings\Rules\Web Forms for Marketers Conditions\Actions\Set Read Only.item" />
     <None Include="Data\serialization\master\sitecore\system\Settings\Rules\Web Forms for Marketers Conditions\Conditions\Query String Condition.item" />
     <None Include="doc\Selection-dependent inputs.docx" />
-    <Content Include="web.config" />
     <Content Include="packages.config" />
-    <None Include="web.Debug.config">
-      <DependentUpon>web.config</DependentUpon>
-    </None>
-    <None Include="web.Release.config">
-      <DependentUpon>web.config</DependentUpon>
-    </None>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
