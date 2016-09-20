@@ -4,8 +4,6 @@ using Sitecore.Mvc.Pipelines.MvcEvents.ActionExecuted;
 
 namespace Morph.Forms.Pipelines.ActionExecuted
 {
-  using SysFormController = FormController;
-
   public class OnFormControllerActionExecuted : ActionExecutedProcessor
   {
     /// <summary>
@@ -14,7 +12,7 @@ namespace Morph.Forms.Pipelines.ActionExecuted
     /// <param name="args">The arguments.</param>
     public override void Process(ActionExecutedArgs args)
     {
-      if (args.Context.Controller is SysFormController)
+      if (args.Context.Controller is FormController)
       {
         new AddJsToActionResultFilterAttribute().OnActionExecuted(args.Context);
       }

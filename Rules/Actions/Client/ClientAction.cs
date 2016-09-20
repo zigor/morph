@@ -74,7 +74,7 @@ namespace Morph.Forms.Rules.Actions.Client
         return;
       }
 
-      ScriptManager.RegisterStartupScript(control, typeof(Page), script, script, true);
+      ScriptManager.RegisterStartupScript(control, typeof(Page), script, InlineJs.SafeScriptWrapping.FormatWith(script), false);
     }
 
     /// <summary>
