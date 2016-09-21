@@ -124,7 +124,6 @@
     <Compile Include="Models\RuleContextModel.cs" />
     <Compile Include="Pipelines\ActionExecuted\OnFormControllerActionExecuted.cs" />
     <Compile Include="Pipelines\ActionExecuting\OnFormControllerActionExecuting.cs" />
-    <Compile Include="Pipelines\Initialize\RegisterFormRouteReplacement.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rules\Actions\Client\ChangingFieldClearValue.cs" />
     <Compile Include="Rules\Actions\Client\ChangingFieldCopyValueFromField.cs" />
