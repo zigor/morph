@@ -1,12 +1,11 @@
 # Morph
-## Selection-dependent input for Web Forms For Marketers
 
-Selection-dependent inputs require users to enter additional information related to an initial selection before they can complete a form. In almost all cases, it let make web forms simpler and more responsive to user actions and personalize forms depending on target audiences. 
-
-Selection-dependent input requires forms to be dynamic on the client side.  By default, the [Web Forms for Marketers](http://sdn.sitecore.net/Products/Web Forms for Marketers/Web Forms for Marketers 2,-d-,3.aspx) module does not provide this behavior but it provides the field rules engine [(5.2 Configuring Web Form Fields)](http://sdn.sitecore.net/upload/sdn5/products/web_forms2/web forms for marketers v2_3 user guide-usletter.pdf) to customize forms fields.
+The project contains a set of actions for Web Forms for Marketers rule engine [(Rule Set Editor)](https://doc.sitecore.net/web_forms_for_marketers/81/using_web_forms/creating_web_forms/create_a_field_rule_in_the_rule_set_editor) to customize forms fields.
 
 ## Client Side Field Actions
-Selection-dependent input is implemented as a set of Web Forms for Marketers field actions. 
+The actions enable selection-dependent inputs for the Sitecore Web Forms for Marketers module.
+
+Selection-dependent input requires users to enter additional information related to an initial selection before they can complete a form. In almost all cases, it let make web forms simpler and more responsive to user actions and personalize forms depending on target audiences. 
 
 -	Changing `specific` field to `value` hide element
   
@@ -48,11 +47,37 @@ Selection-dependent input is implemented as a set of Web Forms for Marketers fie
 
   Runs client side script when the specified fields matches to the specified values.
 
-
 **Note**: prefer to use condition “where true (action always execute)” for all client side actions.
 
+## Server Side Actions
+The set of actions extends Web Forms for Marketers fields behavior if the conditions are met.
+
+- disable element
+  
+  Disables the selected field
+  
+- set read only element
+  
+  Makes the selected field readonly
+
+- use the default value from cache `specific` record
+  
+  Reads the value of the specific cache record and makes it the current field value
+
+- use the default value from session `specific` record
+  
+  Reads the value of the specific session record and makes it the current field value
+
+- use the default value from visit `specific` field
+  
+  Reads the value of the specific visit field and makes it the current field value. Allowed visit field name: areacode, businessname, city, country, dns, isp, latitude, longitude, metrocode, postalcode, region, url.
+ 
+- use the default value from `specific` field matching `regex` pattern
+
+  Reads the value of the specific form field, extracts a match according to the specified regex and makes it the current field value
+
 ## Compatibility
-The extensions for the Web Forms for Marketers module supports both ASP.NET Web Forms and MVC engines
+The extension for the Web Forms for Marketers module supports both ASP.NET Web Forms and MVC engines
 
 ## Examples
 The example of client side actions usage is described in the [document] (https://github.com/zigor/morph/raw/master/doc/Selection-dependent%20inputs.docx)
