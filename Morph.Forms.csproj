@@ -58,6 +58,10 @@
     <Reference Include="Sitecore.Forms.Core">
       <HintPath>..\Website\bin\Sitecore.Forms.Core.dll</HintPath>
     </Reference>
+    <Reference Include="Sitecore.Forms.Custom, Version=8.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Website\bin\Sitecore.Forms.Custom.dll</HintPath>
+    </Reference>
     <Reference Include="Sitecore.Forms.Mvc, Version=8.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Website\bin\Sitecore.Forms.Mvc.dll</HintPath>

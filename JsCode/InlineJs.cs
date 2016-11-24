@@ -1,6 +1,4 @@
-﻿using Sitecore.StringExtensions;
-
-namespace Morph.Forms.JsCode
+﻿namespace Morph.Forms.JsCode
 {
   /// <summary>
   /// Js code builder
@@ -11,6 +9,11 @@ namespace Morph.Forms.JsCode
     /// The selector by identifier
     /// </summary>
     public static readonly string SelectorById = "#{0}";
+
+    /// <summary>
+    /// The selector by list identifier
+    /// </summary>
+    public static readonly string SelectorByListId = "[id^=\"{0}\"]";
 
     /// <summary>
     /// The selector by name from hidden value
@@ -36,5 +39,6 @@ namespace Morph.Forms.JsCode
     /// The safe script wrapping
     /// </summary>
     public static readonly string SafeScriptWrapping = "<script type=\"text/javascript\">(function($){{  var rules=function() {{ {0} }};rules();$(document).ajaxSuccess(function(e, xhr, o, d) {{if (o.url.indexOf('form/Index?wffm') > 0) {{ $=jQuery;rules(); }} }})}})(window.$scw || jQuery);</script>";
+    
   }
 }

@@ -1,5 +1,6 @@
 using System.Web;
 using Sitecore;
+using Sitecore.Form.Web.UI.Controls;
 
 namespace Morph.Forms.Rules.Actions.Client
 {
@@ -88,8 +89,14 @@ namespace Morph.Forms.Rules.Actions.Client
     {
       if (control?.Page != null)
       {
+        string clientId = null;
         var clientControl = this.GetChildMatchingAnyId(control.Controls.Flatten(), control.ID, control.ID + "scope", control.ID + "checkbox");
-        return InlineJs.SelectorById.FormatWith(clientControl.ClientID);
+
+        if (!clientControl.ClientID.EndsWith("scope"))
+        {
+          return InlineJs.SelectorById.FormatWith(clientControl.ClientID);
+        }
+        return InlineJs.SelectorByListId.FormatWith(clientControl.ClientID);
       }
       if (!string.IsNullOrEmpty(fieldId))
       {
