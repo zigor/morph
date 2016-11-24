@@ -89,7 +89,6 @@ namespace Morph.Forms.Rules.Actions.Client
     {
       if (control?.Page != null)
       {
-        string clientId = null;
         var clientControl = this.GetChildMatchingAnyId(control.Controls.Flatten(), control.ID, control.ID + "scope", control.ID + "checkbox");
 
         if (!clientControl.ClientID.EndsWith("scope"))
