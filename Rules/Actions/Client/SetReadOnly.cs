@@ -57,7 +57,7 @@ namespace Morph.Forms.Rules.Actions.Client
         return null;
       }
 
-      return "$('{0}').prop('readonly', 'true');".FormatWith(selector);
+      return "$('{0}').prop('readonly', true);".FormatWith(selector);
     }
 
     /// <summary>

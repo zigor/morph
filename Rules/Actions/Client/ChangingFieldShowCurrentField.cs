@@ -40,7 +40,7 @@ namespace Morph.Forms.Rules.Actions.Client
     {
       if (this.model != null)
       {
-        return "$(this).closest('.form-group').show();$(this).prop('disabled', 'false')";
+        return "$(this).closest('.form-group').show();$(this).prop('disabled', false)";
       }
       return "$(this).parent().parent().show();";
     }
