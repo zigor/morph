@@ -26,12 +26,13 @@
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
     <UseGlobalApplicationHostFile />
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\Website\bin\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -40,7 +41,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\www.sitecore.net_Merge\website\bin\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -55,16 +56,14 @@
       <HintPath>packages\Sitecore.Analytics.NoReferences.8.2.160729\lib\NET452\Sitecore.Analytics.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Sitecore.Forms.Core">
-      <HintPath>..\Website\bin\Sitecore.Forms.Core.dll</HintPath>
+    <Reference Include="Sitecore.Forms.Core, Version=8.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Sitecore.Forms.Core.NoReferences.8.2.170518\lib\NET452\Sitecore.Forms.Core.dll</HintPath>
     </Reference>
     <Reference Include="Sitecore.Forms.Custom, Version=8.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Website\bin\Sitecore.Forms.Custom.dll</HintPath>
+      <HintPath>packages\Sitecore.Forms.Custom.NoReferences.8.2.170518\lib\NET452\Sitecore.Forms.Custom.dll</HintPath>
     </Reference>
     <Reference Include="Sitecore.Forms.Mvc, Version=8.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Website\bin\Sitecore.Forms.Mvc.dll</HintPath>
+      <HintPath>packages\Sitecore.Forms.Mvc.NoReferences.8.2.170518\lib\NET452\Sitecore.Forms.Mvc.dll</HintPath>
     </Reference>
     <Reference Include="Sitecore.Kernel, Version=10.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Sitecore.Kernel.NoReferences.8.2.160729\lib\NET452\Sitecore.Kernel.dll</HintPath>
@@ -74,8 +73,8 @@
       <HintPath>packages\Sitecore.Mvc.NoReferences.8.2.160729\lib\NET452\Sitecore.Mvc.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Sitecore.WFFM.Abstractions">
-      <HintPath>..\Website\bin\Sitecore.WFFM.Abstractions.dll</HintPath>
+    <Reference Include="Sitecore.WFFM.Abstractions, Version=8.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Sitecore.WFFM.Abstractions.NoReferences.8.2.170518\lib\NET452\Sitecore.WFFM.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
