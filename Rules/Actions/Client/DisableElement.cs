@@ -53,7 +53,7 @@
         return null;
       }
 
-      return "$('{0}').prop('disabled', 'true');".FormatWith(selector);
+      return "$('{0}').prop('disabled', true);".FormatWith(selector);
     }
 
     #endregion
